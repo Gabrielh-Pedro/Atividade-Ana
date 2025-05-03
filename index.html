@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Web App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Demo Web App</h1>
+        
+        <!-- Vulnerable form - XSS and CSRF vulnerable -->
+        <form id="searchForm" action="search.php" method="GET">
+            <input type="text" id="searchQuery" name="q" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+        
+        <div id="results"></div>
+        
+        <!-- Vulnerable login form - No CSRF protection -->
+        <form id="loginForm" action="login.php" method="POST">
+            <h2>Login</h2>
+            <input type="text" name="username" placeholder="Username">
+            <input type="password" name="password" placeholder="Password">
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

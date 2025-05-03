@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Web App - Secure Version</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Add Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self';">
+    <!-- Add other security headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Demo Web App - Secure Version</h1>
+        
+        <!-- Secure form with CSRF protection and proper validation -->
+        <form id="searchForm" action="search.php" method="GET">
+            <input type="text" id="searchQuery" name="q" placeholder="Search..." pattern="[A-Za-z0-9\s]+" maxlength="50" required>
+            <button type="submit">Search</button>
+            <!-- CSRF token will be added by JavaScript -->
+        </form>
+        
+        <div id="results"></div>
+        
+        <!-- Secure login form -->
+        <form id="loginForm" action="login.php" method="POST">
+            <h2>Login</h2>
+            <input type="text" name="username" placeholder="Username" pattern="[A-Za-z0-9]+" maxlength="30" required>
+            <input type="password" name="password" placeholder="Password" minlength="8" maxlength="64" required>
+            <button type="submit">Login</button>
+            <!-- CSRF token will be added by JavaScript -->
+        </form>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,5 @@
+10016	IGNORE	http://localhost:8000	(Cross-Domain JavaScript Source File Inclusion)
+10049	IGNORE	http://localhost:8000	(Non-Storable Content)
+10054	IGNORE	http://localhost:8000	(Cookie without SameSite Attribute)
+10055	IGNORE	http://localhost:8000	(CSP Scanner: Wildcard Directive)
+10063	IGNORE	http://localhost:8000	(Permissions Policy Header Not Set) 
