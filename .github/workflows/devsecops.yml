@@ -81,6 +81,14 @@ jobs:
           echo "2. Re-run security scan to validate fixes" >> security-report.md
           echo "3. Document mitigations for audit purposes" >> security-report.md
           
+      # Debug: List files before ZAP report upload
+      - name: Debug - List files before ZAP upload
+        if: always()
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing files:"
+          ls -la
+
       # Upload do relatório do ZAP
       - name: Upload ZAP Scan Report
         if: always()
@@ -88,9 +96,10 @@ jobs:
         with:
           name: zap-scan-report
           path: |
-            ./*-report.html
-            ./*.json
-            ./*.xml
+            ./report_html.html
+            ./report_md.md
+            ./report_xml.xml
+            ./zap-output.json
             
       # Upload do relatório de análise de segurança
       - name: Upload Security Analysis Report
@@ -120,8 +129,16 @@ jobs:
           echo "## Re-test Results" >> validation-report.md
           echo "All critical vulnerabilities have been addressed." >> validation-report.md
           
+      # Debug: List files before validation report upload
+      - name: Debug - List files before validation upload
+        if: always()
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Listing files:"
+          ls -la
+
       - name: Upload Validation Report
         uses: actions/upload-artifact@v3
         with:
           name: validation-report
-          path: ./validation-report.md 
+          path: ./validation-report.md
