@@ -80,7 +80,7 @@ jobs:
         with:
           name: zap-scan-report
           path: |
-            zap-baseline-report.html
+            *zap-baseline*.html
             
       - name: Upload Security Analysis Report
         uses: actions/upload-artifact@v3
