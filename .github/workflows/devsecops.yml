@@ -88,9 +88,9 @@ jobs:
         with:
           name: zap-scan-report
           path: |
-            *.html
-            *.json
-            *.xml
+            ./*-report.html
+            ./*.json
+            ./*.xml
             
       # Upload do relatório de análise de segurança
       - name: Upload Security Analysis Report
@@ -98,7 +98,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: security-analysis-report
-          path: security-report.md
+          path: ./security-report.md
 
   # Validação de mitigação (simulada)
   validate-fixes:
@@ -124,4 +124,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: validation-report
-          path: validation-report.md 
+          path: ./validation-report.md 
