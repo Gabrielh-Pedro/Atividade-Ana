@@ -14,6 +14,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: List workspace contents
+        run: |
+          echo "Conteúdo da pasta raiz:"
+          ls -la
+          echo "Arquivos HTML:"
+          find . -name "*.html" -type f
+          
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
@@ -21,17 +28,26 @@ jobs:
           
       - name: Install dependencies
         run: |
-          cd Atividade
           npm init -y
           npm install --save-dev http-server
 
-      - name: Start web server in background
+      - name: Check port availability
         run: |
-          cd Atividade
-          npx http-server -p 8000 &
+          if lsof -Pi :8000 -sTCP:LISTEN -t >/dev/null ; then
+            echo "Porta 8000 já está em uso. Tentando encerrar processo."
+            lsof -Pi :8000 -sTCP:LISTEN -t | xargs kill -9
+          fi
+          echo "Porta 8000 está disponível."
+
+      - name: Start web server in background
+        run: npx http-server -p 8000 &
         
-      - name: Wait for server to start
-        run: sleep 5
+      - name: Wait for server to start and verify
+        run: |
+          sleep 5
+          curl -sSf http://localhost:8000 || (echo "Servidor web não está respondendo" && exit 1)
+          echo "Servidor web está rodando"
+          curl -s http://localhost:8000 | grep -q "Demo Web App" && echo "Conteúdo da página encontrado" || echo "Conteúdo da página não encontrado"
 
   dast-zap-scan:
     needs: build
@@ -44,7 +60,7 @@ jobs:
         uses: zaproxy/action-baseline@v0.7.0
         with:
           target: 'http://localhost:8000'
-          rules_file_name: 'Atividade/.github/workflows/zap-rules.tsv'
+          rules_file_name: '.github/workflows/zap-rules.tsv'
           cmd_options: '-a'
           
       - name: Upload ZAP Scan Report
