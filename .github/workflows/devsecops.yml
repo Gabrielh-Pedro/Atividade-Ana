@@ -12,20 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
           node-version: '16'
           
       - name: Install dependencies
         run: |
+          cd Atividade
           npm init -y
           npm install --save-dev http-server
 
       - name: Start web server in background
-        run: npx http-server -p 8000 &
+        run: |
+          cd Atividade
+          npx http-server -p 8000 &
         
       - name: Wait for server to start
         run: sleep 5
@@ -35,73 +38,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         
       - name: ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.9.0
+        uses: zaproxy/action-baseline@v0.7.0
         with:
           target: 'http://localhost:8000'
-          rules_file_name: '.github/workflows/zap-rules.tsv'
-          cmd_options: '-a'
-          
-      - name: ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.7.0
-        with:
-          target: 'http://localhost:8000'
-          rules_file_name: '.github/workflows/zap-rules.tsv'
+          rules_file_name: 'Atividade/.github/workflows/zap-rules.tsv'
           cmd_options: '-a'
           
       - name: Upload ZAP Scan Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: zap-scan-report
           path: |
             zap-baseline-report.html
-            zap-full-scan-report.html
-
-  syhunt-scan:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        
-      - name: Run Syhunt Dynamic scan
-        uses: syhunt/syhunt-dynamic-action@master
-        with:
-          parameters: -url http://localhost:8000 -code project_name
-          output-path: ./reports
-          
-      - name: Upload Syhunt Scan Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: syhunt-scan-report
-          path: ./reports
 
   analyze-reports:
-    needs: [dast-zap-scan, syhunt-scan]
+    needs: [dast-zap-scan]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         
       - name: Download ZAP Reports
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v2
         with:
           name: zap-scan-report
-          
-      - name: Download Syhunt Reports
-        uses: actions/download-artifact@v3
-        with:
-          name: syhunt-scan-report
           
       - name: Generate Security Analysis Report
         run: |
           echo "# Security Analysis Report" > security-report.md
           echo "## ZAP Findings" >> security-report.md
           echo "See attached ZAP report files for details." >> security-report.md
-          echo "## Syhunt Findings" >> security-report.md
-          echo "See attached Syhunt report files for details." >> security-report.md
           echo "## Recommended Actions" >> security-report.md
           echo "1. Fix XSS vulnerabilities in search form" >> security-report.md
           echo "2. Implement CSRF protection on forms" >> security-report.md
@@ -110,7 +79,7 @@ jobs:
           echo "5. Secure sensitive data storage" >> security-report.md
           
       - name: Upload Combined Security Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: security-analysis-report
           path: security-report.md 

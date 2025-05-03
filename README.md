@@ -1,64 +1,60 @@
 # DevSecOps DAST Pipeline Demo
 
-This project demonstrates the implementation of DevSecOps practices, specifically focusing on Dynamic Application Security Testing (DAST) using OWASP ZAP and Syhunt in a CI/CD pipeline with GitHub Actions.
+Este projeto demonstra a implementação de práticas DevSecOps, com foco específico em Testes Dinâmicos de Segurança de Aplicações (DAST) usando OWASP ZAP em um pipeline CI/CD com GitHub Actions.
 
-## Project Structure
+## Estrutura do Projeto
 
-- `index.html`: Basic web application with intentional security vulnerabilities
-- `script.js`: JavaScript with various security issues
-- `styles.css`: Styling for the demo application
-- `.github/workflows/devsecops.yml`: GitHub Actions workflow configuration for DAST scanning
-- `.github/workflows/zap-rules.tsv`: Rules configuration for OWASP ZAP
+- `index.html`: Aplicação web básica com vulnerabilidades intencionais de segurança
+- `script.js`: JavaScript com vários problemas de segurança
+- `styles.css`: Estilo para a aplicação de demonstração
+- `.github/workflows/devsecops.yml`: Configuração do workflow do GitHub Actions para escaneamento DAST
+- `.github/workflows/zap-rules.tsv`: Configuração de regras para OWASP ZAP
 
-## Security Vulnerabilities Demonstrated
+## Vulnerabilidades de Segurança Demonstradas
 
-This demo application intentionally contains several security vulnerabilities:
+Esta aplicação de demonstração contém intencionalmente várias vulnerabilidades de segurança:
 
-1. Cross-Site Scripting (XSS) in the search form
-2. Cross-Site Request Forgery (CSRF) vulnerability in the login form
-3. Insecure direct object references
-4. Insecure use of `eval()` function
-5. Unsafe storage of sensitive information in localStorage
+1. Cross-Site Scripting (XSS) no formulário de busca
+2. Vulnerabilidade de Cross-Site Request Forgery (CSRF) no formulário de login
+3. Referências inseguras a objetos diretos
+4. Uso inseguro da função `eval()`
+5. Armazenamento inseguro de informações sensíveis em localStorage
 
-## CI/CD Pipeline with DAST
+## Pipeline CI/CD com DAST
 
-The GitHub Actions workflow includes:
+O workflow do GitHub Actions inclui:
 
-1. **Build Job**: Sets up the application and starts a local web server
-2. **DAST Scanning with OWASP ZAP**: 
-   - Baseline scan for quick security checks
-   - Full scan for comprehensive analysis
-3. **DAST Scanning with Syhunt**:
-   - Performs dynamic scanning with Syhunt
-4. **Report Analysis**:
-   - Collects and combines reports from both scanners
-   - Generates a security analysis summary
+1. **Job de Build**: Configura a aplicação e inicia um servidor web local
+2. **Escaneamento DAST com OWASP ZAP**: 
+   - Escaneamento de linha de base para verificações rápidas de segurança
+3. **Análise de Relatório**:
+   - Coleta relatórios do scanner
+   - Gera um resumo de análise de segurança
 
-## How to Run
+## Como Executar
 
-1. Push this code to a GitHub repository
-2. Go to the Actions tab in your repository
-3. Manually trigger the workflow using the "Run workflow" button
-4. Review the generated security reports in the workflow artifacts
+1. Clone este repositório para sua conta GitHub
+2. Acesse a aba Actions no seu repositório
+3. Ative os workflows no GitHub Actions (quando necessário)
+4. Dispare manualmente o workflow usando o botão "Run workflow"
+5. Revise os relatórios de segurança gerados nos artefatos do workflow
 
-## Suggested Security Fixes
+## Correções de Segurança Sugeridas
 
-After running the DAST scans, you should implement fixes such as:
+Após executar os escaneamentos DAST, você deve implementar correções como:
 
-1. Adding input sanitization to prevent XSS attacks
-2. Implementing CSRF tokens for forms
-3. Replacing `eval()` with safer alternatives
-4. Implementing secure storage for sensitive data
-5. Adding proper Content Security Policy headers
+1. Adicionar sanitização de entrada para prevenir ataques XSS
+2. Implementar tokens CSRF para formulários
+3. Substituir `eval()` por alternativas mais seguras
+4. Implementar armazenamento seguro para dados sensíveis
+5. Adicionar cabeçalhos apropriados de Content Security Policy
 
-## Security Fix Implementation
+## Implementação de Correções de Segurança
 
-To address the vulnerabilities, see the `fixed-version` branch for a secure implementation of the same functionality.
+Para corrigir as vulnerabilidades, veja a pasta `fixed-version` para uma implementação segura das mesmas funcionalidades.
 
-## References
+## Referências
 
 - [OWASP ZAP](https://www.zaproxy.org/)
-- [Syhunt](https://www.syhunt.com/)
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [GitHub Actions for ZAP](https://github.com/marketplace/actions/zap-baseline-scan)
-- [Syhunt GitHub Integration](https://www.syhunt.com/en/index.php?n=Docs.SyhuntIntegrationGitHub) 
+- [GitHub Actions para ZAP](https://github.com/marketplace/actions/zap-baseline-scan) 
