@@ -92,7 +92,7 @@ jobs:
       # Upload do relatório do ZAP
       - name: Upload ZAP Scan Report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zap-scan-report
           path: |
@@ -104,7 +104,7 @@ jobs:
       # Upload do relatório de análise de segurança
       - name: Upload Security Analysis Report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: security-analysis-report
           path: ./security-report.md
@@ -138,7 +138,7 @@ jobs:
           ls -la
 
       - name: Upload Validation Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: validation-report
           path: ./validation-report.md
