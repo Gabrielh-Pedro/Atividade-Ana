@@ -8,79 +8,60 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  security-scan:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: List workspace contents
+      - name: Debug - listar estrutura do repositório
         run: |
-          echo "Conteúdo da pasta raiz:"
+          echo "Estrutura do repositório:"
           ls -la
-          echo "Arquivos HTML:"
-          find . -name "*.html" -type f
-          
+          echo "Conteúdo da pasta Atividade:"
+          ls -la Atividade/
+          echo "Verificando arquivo de regras do ZAP:"
+          find . -name "zap-rules.tsv"
+
+      - name: Preparar arquivo de regras do ZAP
+        run: |
+          mkdir -p .zap
+          cat > .zap/rules.tsv << 'EOL'
+          10016	IGNORE	http://localhost:8000	(Cross-Domain JavaScript Source File Inclusion)
+          10049	IGNORE	http://localhost:8000	(Non-Storable Content)
+          10054	IGNORE	http://localhost:8000	(Cookie without SameSite Attribute)
+          10055	IGNORE	http://localhost:8000	(CSP Scanner: Wildcard Directive)
+          10063	IGNORE	http://localhost:8000	(Permissions Policy Header Not Set)
+          EOL
+
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '16'
           
       - name: Install dependencies
+        working-directory: ./Atividade
         run: |
           npm init -y
           npm install --save-dev http-server
 
-      - name: Check port availability
-        run: |
-          if lsof -Pi :8000 -sTCP:LISTEN -t >/dev/null ; then
-            echo "Porta 8000 já está em uso. Tentando encerrar processo."
-            lsof -Pi :8000 -sTCP:LISTEN -t | xargs kill -9
-          fi
-          echo "Porta 8000 está disponível."
-
       - name: Start web server in background
+        working-directory: ./Atividade
         run: npx http-server -p 8000 &
         
-      - name: Wait for server to start and verify
+      - name: Wait for server to start
         run: |
           sleep 5
           curl -sSf http://localhost:8000 || (echo "Servidor web não está respondendo" && exit 1)
-          echo "Servidor web está rodando"
-          curl -s http://localhost:8000 | grep -q "Demo Web App" && echo "Conteúdo da página encontrado" || echo "Conteúdo da página não encontrado"
+          echo "Servidor web está respondendo em http://localhost:8000"
 
-  dast-zap-scan:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
       - name: ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.7.0
+        uses: zaproxy/action-baseline@v0.9.0
         with:
           target: 'http://localhost:8000'
-          rules_file_name: '.github/workflows/zap-rules.tsv'
+          rules_file_name: '.zap/rules.tsv'
           cmd_options: '-a'
-          
-      - name: Upload ZAP Scan Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: zap-scan-report
-          path: |
-            zap-baseline-report.html
-
-  analyze-reports:
-    needs: [dast-zap-scan]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Download ZAP Reports
-        uses: actions/download-artifact@v2
-        with:
-          name: zap-scan-report
+          allow_issue_writing: false
           
       - name: Generate Security Analysis Report
         run: |
@@ -94,8 +75,15 @@ jobs:
           echo "4. Add input sanitization for user inputs" >> security-report.md
           echo "5. Secure sensitive data storage" >> security-report.md
           
-      - name: Upload Combined Security Report
-        uses: actions/upload-artifact@v2
+      - name: Upload ZAP Scan Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-scan-report
+          path: |
+            zap-baseline-report.html
+            
+      - name: Upload Security Analysis Report
+        uses: actions/upload-artifact@v3
         with:
           name: security-analysis-report
           path: security-report.md 
