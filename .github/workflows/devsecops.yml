@@ -7,6 +7,11 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+# Add permissions block here
+permissions:
+  contents: read
+  issues: write # Allow the ZAP action to create issues
+
 jobs:
   security-scan:
     runs-on: ubuntu-latest
